@@ -12,18 +12,18 @@ qc.width = 1400
 qc.height = 800
 qc.device_pixel_ratio = 2.0
 
-# TOKEN goes here.
-token = ""
-
 # The AQ3D API for retrieving player counts.
 aq3d_api = "https://game.aq3d.com/api/game/ServerList"
 
-# Your preferred prefix here.
-prefix = "!"
+# Reads the config file for personalised configs.
+with open("./config.json", "r") as config:
+    configData = json.load(config)
+    token = configData["token"]
+    prefix = configData["prefix"]
 
 class Mazen(discord.Client):
     async def on_ready(self):
-        print('Launched as {0}!'.format(self.user))
+        print(f"Launched as {self.user}!")
 
     async def on_message(self, message):
         if message.author == client.user:
@@ -56,14 +56,14 @@ class Mazen(discord.Client):
                             "borderWidth": "3"
                         },
                         {
-                            "label": "Green Dragon",
+                            "label": "Green Dragon (EU)",
                             "data": [data[4]["UserCount"]],
                             "backgroundColor": "#76B7B233",
                             "borderColor": "#76B7B2",
                             "borderWidth": "3"
                         },
                         {
-                            "label": "Gold Dragon",
+                            "label": "Gold Dragon (SEA)",
                             "data": [data[5]["UserCount"]],
                             "backgroundColor": "#F28E2B33",
                             "borderColor": "#F28E2B",
@@ -76,7 +76,7 @@ class Mazen(discord.Client):
             embed = discord.Embed(title="", description="", colour=discord.Colour(0x800000))
             embed.set_author(name="AQ3D - Server Status", icon_url="https://i.imgur.com/rqpX3dJ.png")
             embed.set_image(url=qc.get_short_url())
-            embed.set_footer(text="Created by Saryion#0001")
+            embed.set_footer(text="Created by Saryion#0001 - github.com/Saryion/Mazen")
             embed.timestamp = datetime.datetime.utcnow()
 
             embed.add_field(name="Red Dragon", value=f":red_circle: {data[0]['UserCount']} / {data[0]['MaxUsers']}", inline=True)
