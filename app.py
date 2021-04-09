@@ -35,48 +35,20 @@ class Mazen(discord.Client):
                 async with session.get(url=aq3d_api) as response:
                     data = await response.json()
 
-            # The config setup for the bar graph.
-            qc.config = {
-                "type": "bar",
-                "data": {
-                    "labels": [f"AdventureQuest 3D Analytics - Created by Saryion#0001            Last Updated: {data[0]['LastUpdated']}"],
-                    "datasets": [
-                        {
-                            "label": "Red Dragon",
-                            "data": [data[0]["UserCount"]],
-                            "backgroundColor": "#E1575933",
-                            "borderColor": "#E15759",
-                            "borderWidth": "3"
-                        },
-                        {
-                            "label": "Blue Dragon",
-                            "data": [data[2]["UserCount"]],
-                            "backgroundColor": "#4E79A733",
-                            "borderColor": "#4E79A7",
-                            "borderWidth": "3"
-                        },
-                        {
-                            "label": "Green Dragon (EU)",
-                            "data": [data[4]["UserCount"]],
-                            "backgroundColor": "#76B7B233",
-                            "borderColor": "#76B7B2",
-                            "borderWidth": "3"
-                        },
-                        {
-                            "label": "Gold Dragon (SEA)",
-                            "data": [data[5]["UserCount"]],
-                            "backgroundColor": "#F28E2B33",
-                            "borderColor": "#F28E2B",
-                            "borderWidth": "3"
-                        }
-                    ]
-                },
-            }
+            # Pulling the config data for the bar graph from the qc config file.
+            with open("./qc_config.json", "r") as config:
+                qc_config = json.load(config)
+                qc_config["data"]["datasets"][0]["data"] = [data[0]["UserCount"]]
+                qc_config["data"]["datasets"][1]["data"] = [data[2]["UserCount"]]
+                qc_config["data"]["datasets"][2]["data"] = [data[4]["UserCount"]]
+                qc_config["data"]["datasets"][3]["data"] = [data[5]["UserCount"]]
+
+            qc.config = qc_config
 
             embed = discord.Embed(title="", description="", colour=discord.Colour(0x800000))
             embed.set_author(name="AQ3D - Server Status", icon_url="https://i.imgur.com/rqpX3dJ.png")
             embed.set_image(url=qc.get_short_url())
-            embed.set_footer(text="Created by Saryion#0001 - github.com/Saryion/Mazen")
+            embed.set_footer(text="Created by Saryion#0001 - Github.com/Saryion/Mazen")
             embed.timestamp = datetime.datetime.utcnow()
 
             embed.add_field(name="Red Dragon", value=f":red_circle: {data[0]['UserCount']} / {data[0]['MaxUsers']}", inline=True)

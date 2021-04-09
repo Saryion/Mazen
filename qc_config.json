@@ -1,0 +1,36 @@
+{
+  "type": "bar",
+  "data": {
+    "labels": ["AdventureQuest 3D Analytics - Created by Saryion#0001"],
+    "datasets": [
+      {
+        "label": "Red Dragon",
+        "data": 0,
+        "backgroundColor": "#E1575933",
+        "borderColor": "#E15759",
+        "borderWidth": "3"
+      },
+      {
+        "label": "Blue Dragon",
+        "data": 0,
+        "backgroundColor": "#4E79A733",
+        "borderColor": "#4E79A7",
+        "borderWidth": "3"
+      },
+      {
+        "label": "Green Dragon (EU)",
+        "data": 0,
+        "backgroundColor": "#76B7B233",
+        "borderColor": "#76B7B2",
+        "borderWidth": "3"
+      },
+      {
+        "label": "Gold Dragon (SEA)",
+        "data": 0,
+        "backgroundColor": "#F28E2B33",
+        "borderColor": "#F28E2B",
+        "borderWidth": "3"
+      }
+    ]
+  }
+}
