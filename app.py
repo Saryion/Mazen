@@ -4,13 +4,41 @@ import os
 
 from discord.ext import commands
 
-# Reads the config file for personalised configs.
-with open("./config.json", "r") as config:
-    configData = json.load(config)
+with open("./config.json", "r") as file:
+    configData = json.load(file)
     token = configData["token"]
-    prefix = configData["prefix"]
 
-client = commands.Bot(command_prefix=prefix)
+def fetch_prefix(client, message):
+    with open("./prefixes.json", "r") as file:
+        prefixes = json.load(file)
+
+    return prefixes[str(message.guild.id)]
+
+client = commands.Bot(command_prefix=fetch_prefix)
+
+async def on_guild_join(guild):
+    with open("./prefixes.json", "r") as file:
+        prefixes = json.load(file)
+
+    prefixes[str(guild.id)] = "!"
+
+    with open("./prefixes.json", "w") as file:
+        json.dump(prefixes, file, indent=2)
+
+@client.event
+async def on_guild_remove(guild):
+    with open("./prefixes.json", "r") as file:
+        prefixes = json.load(file)
+
+    prefixes.pop(str(guild.id))
+
+    with open("./prefixes.json", "w") as file:
+        json.dump(prefixes, file, indent=2)
+
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandNotFound):
+        await ctx.send("This command does not exist in my commands.")
 
 @client.command()
 async def load(ctx, extension):
@@ -19,6 +47,11 @@ async def load(ctx, extension):
 @client.command()
 async def unload(ctx, extension):
     client.unload_extension(f"cogs.{extension}")
+
+@client.command()
+async def reload(ctx, extension):
+    client.unload_extension(f"cogs.{extension}")
+    client.load_extension(f"cogs.{extension}")
 
 for cogs in os.listdir("./cogs"):
     if cogs.endswith(".py"):
