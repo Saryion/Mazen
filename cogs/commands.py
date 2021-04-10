@@ -1,5 +1,4 @@
 import aiohttp
-import asyncio
 import datetime
 import discord
 import json
@@ -7,14 +6,13 @@ import json
 from discord.ext import commands
 from quickchart import QuickChart
 
-# Some initiate setup for QuickChart.
 qc = QuickChart()
 qc.width = 1400
 qc.height = 800
 qc.device_pixel_ratio = 2.0
 
-# The AQ3D API for retrieving player counts.
 aq3d_api = "https://game.aq3d.com/api/game/ServerList"
+
 
 class Commands(commands.Cog):
     def __init__(self, client):
@@ -34,7 +32,6 @@ class Commands(commands.Cog):
             async with session.get(url=aq3d_api) as response:
                 data = await response.json()
 
-        # Pulling the config data for the bar graph from the qc config file.
         with open("./qc_config.json", "r") as config:
             qc_config = json.load(config)
             qc_config["data"]["datasets"][0]["data"] = [data[0]["UserCount"]]
@@ -59,6 +56,7 @@ class Commands(commands.Cog):
         embed.timestamp = datetime.datetime.utcnow()
 
         await ctx.send(embed=embed)
+
 
 def setup(client):
     client.add_cog(Commands(client))
