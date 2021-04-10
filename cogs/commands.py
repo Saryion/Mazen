@@ -32,29 +32,63 @@ class Commands(commands.Cog):
             async with session.get(url=aq3d_api) as response:
                 data = await response.json()
 
-        with open("./qc_config.json", "r") as config:
-            qc_config = json.load(config)
-            qc_config["data"]["datasets"][0]["data"] = [data[0]["UserCount"]]
-            qc_config["data"]["datasets"][1]["data"] = [data[2]["UserCount"]]
-            qc_config["data"]["datasets"][2]["data"] = [data[4]["UserCount"]]
-            qc_config["data"]["datasets"][3]["data"] = [data[5]["UserCount"]]
+        users_red = data[0]["UserCount"]
+        users_blue = data[2]["UserCount"]
+        users_green = data[4]["UserCount"]
+        users_gold = data[5]["UserCount"]
+        users = users_red + users_blue + users_green + users_gold
 
+        max_red = data[0]["MaxUsers"]
+        max_blue = data[2]["MaxUsers"]
+        max_green = data[4]["MaxUsers"]
+        max_gold = data[5]["MaxUsers"]
+        max_users = max_red + max_blue + max_green + max_gold
+
+        with open("./qc_config.json", "r") as file:
+            qc_config = json.load(file)
+            qc_config["data"]["datasets"][0]["data"] = [users_red]
+            qc_config["data"]["datasets"][1]["data"] = [users_blue]
+            qc_config["data"]["datasets"][2]["data"] = [users_green]
+            qc_config["data"]["datasets"][3]["data"] = [users_gold]
         qc.config = qc_config
 
-        embed = discord.Embed(title="", description="", colour=discord.Colour(0x800000))
-        embed.set_author(name="AQ3D - Server Status", icon_url="https://i.imgur.com/rqpX3dJ.png")
-        embed.set_image(url=qc.get_short_url())
-        embed.set_footer(text="Saryion#0001 - Github.com/Saryion/Mazen", icon_url="https://i.imgur.com/FeJUMrT.png")
+        embed = discord.Embed(title="",
+                              description="",
+                              colour=discord.Colour(0x800000))
 
-        embed.add_field(name="Red Dragon", value=f":red_circle: {data[0]['UserCount']} / {data[0]['MaxUsers']}", inline=True)
-        embed.add_field(name="Blue Dragon", value=f":blue_circle: {data[2]['UserCount']} / {data[2]['MaxUsers']}", inline=True)
-        embed.add_field(name="Green Dragon (EU)", value=f":green_circle: {data[4]['UserCount']} / {data[4]['MaxUsers']}", inline=True)
-        embed.add_field(name="Gold Dragon (SEA)", value=f":yellow_circle: {data[5]['UserCount']} / {data[5]['MaxUsers']}", inline=True)
-        embed.add_field(name="Players", value=f" {data[0]['UserCount'] + data[2]['UserCount'] + data[4]['UserCount'] + data[5]['UserCount']} / {data[0]['MaxUsers'] + data[2]['MaxUsers'] + data[4]['MaxUsers'] + data[5]['MaxUsers']}", inline=True)
-        embed.add_field(name="Last Updated", value=f" {data[0]['LastUpdated']}", inline=True)
+        embed.set_author(name="AQ3D - Server Status",
+                         icon_url="https://i.imgur.com/rqpX3dJ.png")
+
+        embed.set_image(url=qc.get_short_url())
+
+        embed.set_footer(text="Saryion#0001 - Github.com/Saryion/Mazen",
+                         icon_url="https://i.imgur.com/FeJUMrT.png")
+
+        embed.add_field(name="Red Dragon",
+                        value=f":red_circle: {users_red} / {max_red}",
+                        inline=True)
+
+        embed.add_field(name="Blue Dragon",
+                        value=f":blue_circle: {users_blue} / {max_blue}",
+                        inline=True)
+
+        embed.add_field(name="Green Dragon (EU)",
+                        value=f":green_circle: {users_green} / {max_green}",
+                        inline=True)
+
+        embed.add_field(name="Gold Dragon (SEA)",
+                        value=f":yellow_circle: {users_gold} / {max_gold}",
+                        inline=True)
+
+        embed.add_field(name="Players",
+                        value=f" {users} / {max_users}",
+                        inline=True)
+
+        embed.add_field(name="Last Updated",
+                        value=f" {data[0]['LastUpdated']}",
+                        inline=True)
 
         embed.timestamp = datetime.datetime.utcnow()
-
         await ctx.send(embed=embed)
 
 
